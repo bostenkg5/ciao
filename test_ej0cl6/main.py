@@ -1,7 +1,5 @@
 import os
 import sys
-import threading
-import argparse
 from Tkinter import *
 
 def tt():
