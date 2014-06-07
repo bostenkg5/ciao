@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from pyaudio import PyAudio, paInt16
 import wave
+from startGame import *
+import threading
 
 CHUNK = 1024
 
@@ -18,7 +20,8 @@ def play():
 					output=True)
 
 	data = wf.readframes(CHUNK)
-
+	td = threading.Thread(target=startGame)
+	td.start()
 	while data != '':
 		stream.write(data)
 		data = wf.readframes(CHUNK)
