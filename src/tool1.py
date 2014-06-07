@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from pyaudio import PyAudio, paInt16
 from datetime import datetime 
-from aubio import source, pitch, freqtomidi
+# from aubio import source, pitch, freqtomidi
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import wave
 import sys

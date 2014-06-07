@@ -1,6 +1,7 @@
 import os
 import sys
 from Tkinter import *
+import tool1
 
 def tt():
 	print 'tt'
@@ -15,7 +16,7 @@ def main():
 	recordButton = Button(tkObj)
 	recordButton["text"] = 'record'
 	recordButton.grid(columnspan=10, sticky="nwse")
-	recordButton["command"] = tt
+	recordButton["command"] = record
 	
 	tkObj.mainloop()
 	
