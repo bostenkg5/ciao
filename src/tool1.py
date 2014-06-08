@@ -1,26 +1,24 @@
 # -*- coding: utf-8 -*-
 from pyaudio import PyAudio, paInt16
 from datetime import datetime 
-# from aubio import source, pitch, freqtomidi
+from aubio import source, pitch, freqtomidi
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import wave
 import sys
 
-NUM_SAMPLES = 2000		# pyAudio內部緩存的塊的大小
+BUFFER_SIZE = 1024
 SAMPLING_RATE = 44000   # about 22050 * 2
-SAVE_LENGTH = 44        # 聲音記錄的最小長度：SAVE_LENGTH * NUM_SAMPLES 個取樣
+SAVE_LENGTH = 1
 
 
-def record():
 
+def record(filename="tmp.wav"):
 
 	pa = PyAudio()
-	in_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=NUM_SAMPLES)
-
+	in_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
 	out_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE,output=True)
-
 	save_count = 0
 	save_buffer = []
 	save_data   = []
@@ -29,16 +27,18 @@ def record():
 
 
 	while save_count>0:
-		string_audio_data = in_stream.read(NUM_SAMPLES)
+		string_audio_data = in_stream.read(BUFFER_SIZE)
 		audio_data = np.fromstring(string_audio_data, dtype=np.short)
-
+		
 		save_buffer.append( string_audio_data )
 		save_data.append( audio_data )
 
 		save_count = save_count - 1
 
 	print 'save to test.wav'
-	save_wave_file("test.wav",save_buffer)
+	save_wave_file(filename, save_buffer)
+
+
 
 def save_wave_file(filename, data):
     wf = wave.open(filename, 'wb')
@@ -47,20 +47,38 @@ def save_wave_file(filename, data):
     wf.setframerate(SAMPLING_RATE)
     wf.writeframes("".join(data))
     wf.close()
+					   
+					   
+def pitch_tracking():
+	pitches = [];
+	pa = PyAudio()
+	in_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
+	out_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE,output=True)
+		
+	while True:
+		
+		string_data = in_stream.read(BUFFER_SIZE)
+		audio_data  = np.fromstring(string_data, dtype=np.short)
+		
+		xs = audio_data[:BUFFER_SIZE]
+		xf = np.fft.rfft(xs)/BUFFER_SIZE
+	
+		freqs = np.linspace(0, SAMPLING_RATE/2, BUFFER_SIZE/2+1)
+		xfp = 20*np.log10(np.clip(np.abs(xf), 1e-20, 1e100))
+		
+		idx = np.argmax(xfp)
+		pitches.append(idx)
+
+		if pitches.count(idx)>20:
+			break
+
+	print freqs[idx]
+
+	
+					   
+					   
 
 
+					   
 
 
-
-
-'''
-	else: 
-	    # 將save_buffer中的數據寫入WAV文件，WAV文件的文件名是保存的時刻
-	    if len(save_buffer) > 0: 
-			#pl.plot(time, 
-	        filename = datetime.now().strftime("%Y-%m-%d_%H_%M_%S") + ".wav" 
-	        save_wave_file(filename, save_buffer) 
-	        #save_buffer = [] 
-	        print filename, "saved" 
-
-'''
