@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pyaudio import PyAudio, paInt16
 import wave
-from startGame import *
+from tool2 import *
 import threading
 
 CHUNK = 1024
