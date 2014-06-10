@@ -1,4 +1,5 @@
 from pyaudio import PyAudio, paInt16
+import matplotlib.pyplot as plt
 import numpy as np
 import wave
 
@@ -91,4 +92,9 @@ class Wav:
 		fp = open(fileName, 'r')
 		self.beat = [int(line) for line in fp]
 		fp.close()
-		
+
+
+	def plot(self):
+		audio = self.audioData[:BUFFER_SIZE]
+		plt.plot(audio)
+		plt.show()

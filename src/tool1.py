@@ -7,6 +7,7 @@ import wave
 import sys
 from Wav import *
 from scipy.spatial import distance
+from MFCC import extract
 
 
 BUFFER_SIZE = 1024
@@ -80,6 +81,16 @@ def pitch_tracking():
 		# if pitches.count(idx)>40:
 			# break
 
+def get_pitch(audio_data):
+	freq = np.fft.rfft(audio_data)
+	idx  = np.argmax(freq)
+	
+	#freqs = np.linspace(0, SAMPLING_RATE/2, BUFFER_SIZE/2+1)
+	#	print freqs[idx]
+	
+	return idx
+
+
 def decide():
 	wav1=Wav('1.wav')
 	wav1.load()
@@ -90,11 +101,22 @@ def decide():
 	wav3=Wav('3.wav')
 	wav3.load()
 	
-	dist13 = calc_MFCC_dist(wav3.audioData,wav1.audioData)
-	print "dist13",dist13
+	s1 = wav1.audioData/np.max(wav1.audioData)
+	s2 = wav2.audioData/np.max(wav2.audioData)
+	s3 = wav3.audioData/np.max(wav3.audioData)
+	
+	
+	dist13 = calc_MFCC_dist(s1,s3)
+	dist13 +=calc_pitch_dist(s1,s3)
 
-	dist23 = calc_MFCC_dist(wav3.audioData,wav2.audioData)
-	print "dist23",dist23
+	dist23 = calc_MFCC_dist(s2, s3)
+	dist23 +=calc_pitch_dist(s2, s3)
+	
+	print "dist13",calc_MFCC_dist(s1,s3)
+	print "pitch13",calc_pitch_dist(s1, s3)
+	
+	print "dist23",calc_MFCC_dist(s2,s3)
+	print "pitch23",calc_pitch_dist(s2, s3)
 
 	if dist13 < dist23:
 		print 1
@@ -104,11 +126,14 @@ def decide():
 		return 2
 
 def calc_MFCC_dist(m1,m2):
-	f1 = np.array(m1.flatten())
-	f2 = np.array(m2.flatten())
-	
-	return distance.cosine(f1,f2)
+	f1 = extract( np.asarray( m1.flatten()))
+	f2 = extract( np.asarray( m2.flatten()))
 
+	return distance.euclidean(f1.flatten(), f2.flatten())
+#	return distance.cosine(f1.flatten(), f2.flatten())
 
+def calc_pitch_dist(m1,m2):
+	p1 = get_pitch(m1)
+	p2 = get_pitch(m2)
 
-
+	return np.abs(p1 - p2)
