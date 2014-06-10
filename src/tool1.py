@@ -13,7 +13,7 @@ SAVE_LENGTH = 40
 
 
 
-def record(filename="tmp.wav"):
+def record(wav):
 
 	pa = PyAudio()
 	in_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
@@ -35,8 +35,8 @@ def record(filename="tmp.wav"):
 
 		save_count = save_count - 1
 
-	print 'save %s' % (filename)
-	save_wave_file(filename, save_buffer)
+	print 'save %s' % (wav.fileName)
+	save_wave_file(wav.fileName, save_buffer)
 	
 	pa.terminate()
 
@@ -63,6 +63,7 @@ def pitch_tracking():
 		audio_data  = np.fromstring(string_data, dtype=np.short)
 		
 		xs = audio_data[:BUFFER_SIZE]
+		print xs
 		xf = np.fft.rfft(xs)/BUFFER_SIZE
 	
 		freqs = np.linspace(0, SAMPLING_RATE/2, BUFFER_SIZE/2+1)
