@@ -3,11 +3,16 @@ import sys
 from Tkinter import *
 from PIL import Image, ImageTk
 import random
+from comment import *
 global canvas
 global ball
 global openBall
 global index
 global exiting
+global comments
+global isComment
+global commentIndex
+global commentNum
 
 def startGame(number):
 	global canvas
@@ -15,6 +20,10 @@ def startGame(number):
 	global ball
 	global openBall
 	global exiting
+	global comments
+	global isComment
+	global commentIndex
+	global commentNum
 	tkObj = Tk()
 	canvas = Canvas(tkObj, width = 1200, height = 400)
 	canvas.pack()
@@ -26,23 +35,33 @@ def startGame(number):
 	im = []
 	ball = []
 	openBall = False
-	exiting =False
+	exiting = False
+	isComment = False
+	comments = []
 	count = 0
 	for i in range(number):
 		image.append(Image.open("../resource/ball"+str(i)+".png"))
 		image[i] = image[i].resize((100,100),Image.BICUBIC)
 		im.append(ImageTk.PhotoImage(image[i],master = canvas))
+	for i in range(3) :
+		image.append(Image.open("../resource/comment"+str(i)+".png"))
+		im.append(ImageTk.PhotoImage(image[i+number],master = canvas))
 	while True:
 		if openBall == True :
 			x0 = 10
 			y0 = (400/number)*index+50
 			ball.append(canvas.create_image(x0,y0,image=im[index]))
 			openBall = False
+		if isComment == True :
+			isComment = False
+			y0 = (400/number)*commentIndex+50
+			comments.append(comment(canvas.create_image(1000,y0,image=im[number+commentNum])))
 		if exiting == True :
 			count+=1
 		if count == 300 :
 			tkObj.destroy()
 		goBalls()
+		checkComment()
 	tkObj.mainloop()
 
 def createBall(_index):
@@ -59,9 +78,23 @@ def goBalls():
 		canvas.move(i, dx, 0)
 	canvas.after(10)
 	canvas.update()
+def checkComment():
+	global comments
+	global canvas
+	for i in comments :
+		i.timerAdd()
+		if i.isTimeOut() :
+			canvas.delete(i.getImg())
+			comments.remove(i)
 def exitGame():
 	global exiting
 	exiting = True
-
+def judgeComment(_comment,_index):
+	global isComment
+	global commentIndex
+	global commentNum
+	isComment = True
+	commentIndex = _index
+	commentNum = _comment
 if __name__ == "__main__":
 	startGame(4)

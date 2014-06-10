@@ -48,6 +48,7 @@ def playMusic(n):
 		if len(beat)>0 and sampleSum>=beat[0]:
 			print '%d !!!!' % (sampleSum)
 			createBall(random.randrange(0,4))
+			judgeComment(random.randrange(0,3),random.randrange(0,4))
 			beat = beat[1:]
 		stream.write(data)
 		data = wf.readframes(BUFFER_SIZE)
