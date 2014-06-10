@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from pyaudio import PyAudio, paInt16
 from datetime import datetime 
-from aubio import source, pitch, freqtomidi
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,7 +9,7 @@ import sys
 
 BUFFER_SIZE = 1024
 SAMPLING_RATE = 44000   # about 22050 * 2
-SAVE_LENGTH = 1
+SAVE_LENGTH = 40
 
 
 
@@ -24,7 +23,8 @@ def record(filename="tmp.wav"):
 	save_data   = []
 
 	save_count = SAVE_LENGTH
-
+	
+	print 'start recording'
 
 	while save_count>0:
 		string_audio_data = in_stream.read(BUFFER_SIZE)
@@ -35,8 +35,10 @@ def record(filename="tmp.wav"):
 
 		save_count = save_count - 1
 
-	print 'save to test.wav'
+	print 'save %s' % (filename)
 	save_wave_file(filename, save_buffer)
+	
+	pa.terminate()
 
 
 

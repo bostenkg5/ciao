@@ -4,6 +4,10 @@ from Tkinter import *
 from tool1 import *
 from tool3 import *
 
+def tt():
+	print 'tt'
+
+
 def main():
 	print 'main start'
 	
@@ -13,13 +17,13 @@ def main():
 	recordButton = Button(tkObj)
 	recordButton["text"] = 'record'
 	recordButton.grid(columnspan=10, sticky="nwse")
-	recordButton["command"] = lambda: record("tmp.wav")
+	recordButton["command"] = record
 	
 	# play button
 	playButton = Button(tkObj)
 	playButton["text"] = 'play'
 	playButton.grid(columnspan=10, sticky="nwse")
-	playButton["command"] = lambda: play("tmp.wav")
+	playButton["command"] = play
 	
 	tkObj.mainloop()
 	
