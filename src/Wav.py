@@ -42,7 +42,6 @@ class Wav:
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
-		print self.audioData
 		
 	def play(self):
 		print "play %s" % (self.fileName)
