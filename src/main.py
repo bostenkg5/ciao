@@ -46,6 +46,11 @@ def main():
 	playButton.grid(columnspan=10, sticky="nwse")
 	playButton["command"] = lambda: wav2.play()
 	
+	# play button
+	featButton = Button(tkObj)
+	featButton["text"] = 'feature1'
+	featButton.grid(columnspan=10, sticky="nwse")
+	featButton["command"] = lambda: wav1.getFeature()	
 	
 	tkObj.mainloop()
 	

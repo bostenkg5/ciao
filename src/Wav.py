@@ -3,13 +3,14 @@ import numpy as np
 import wave
 
 BUFFER_SIZE = 1024
-SAMPLING_RATE = 44000   # about 22050 * 2
-SAVE_LENGTH = 40
+SAMPLING_RATE = 44032   # about 22050 * 2
+SAVE_LENGTH = 43
 
 class Wav:
 	def __init__(self, fileName):
 		self.fileName = fileName
-		self.x = None
+		self.stringAudioData = None
+		self.audioData = None
 		self.feature = None
 
 	def record(self):
@@ -17,7 +18,7 @@ class Wav:
 		in_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
 		save_count = 0
 		save_buffer = []
-		save_data   = []
+		save_data   = None
 
 		save_count = SAVE_LENGTH
 		
@@ -25,10 +26,7 @@ class Wav:
 		while save_count>0:
 			string_audio_data = in_stream.read(BUFFER_SIZE)
 			audio_data = np.fromstring(string_audio_data, dtype=np.short)
-			
 			save_buffer.append( string_audio_data )
-			save_data.append( audio_data )
-
 			save_count = save_count - 1
 
 		print 'save %s' % (self.fileName)
@@ -41,6 +39,11 @@ class Wav:
 		wf.writeframes("".join(save_buffer))
 		wf.close()
 		
+		self.stringAudioData = "".join(save_buffer)
+		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
+		self.audioData = save_data
+		print self.audioData
+		
 	def play(self):
 		print "play %s" % (self.fileName)
 		wf = wave.open(self.fileName, 'rb')
@@ -49,18 +52,11 @@ class Wav:
 						channels=wf.getnchannels(),
 						rate=wf.getframerate(),
 						output=True)
-
-		# td = threading.Thread(target=startGame)
-		# td.start()
 		
-		data = wf.readframes(BUFFER_SIZE)
-		while data != '':
-			stream.write(data)
-			data = wf.readframes(BUFFER_SIZE)
+		stream.write(self.stringAudioData)
 
 		stream.stop_stream()
 		stream.close()
 		wf.close()
 		pa.terminate()
 		
-	# def getFeature(self):
