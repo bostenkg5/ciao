@@ -5,6 +5,9 @@ from datetime import datetime
 import numpy as np
 import wave
 import sys
+from Wav import *
+from scipy.spatial import distance
+
 
 BUFFER_SIZE = 1024
 SAMPLING_RATE = 44000   # about 22050 * 2
@@ -76,6 +79,36 @@ def pitch_tracking():
 
 		# if pitches.count(idx)>40:
 			# break
+
+def decide():
+	wav1=Wav('1.wav')
+	wav1.load()
+	
+	wav2=Wav('2.wav')
+	wav2.load()
+	
+	wav3=Wav('3.wav')
+	wav3.load()
+	
+	dist13 = calc_MFCC_dist(wav3.audioData,wav1.audioData)
+	print "dist13",dist13
+
+	dist23 = calc_MFCC_dist(wav3.audioData,wav2.audioData)
+	print "dist23",dist23
+
+	if dist13 < dist23:
+		print 1
+		return 1
+	else:
+		print 2
+		return 2
+
+def calc_MFCC_dist(m1,m2):
+	f1 = np.array(m1.flatten())
+	f2 = np.array(m2.flatten())
+	
+	return distance.cosine(f1,f2)
+
 
 
 

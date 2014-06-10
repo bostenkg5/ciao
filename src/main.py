@@ -125,7 +125,7 @@ def main():
 	tmpButton = Button(tkObj)
 	tmpButton["text"] = 'tmp'
 	tmpButton.grid(columnspan=10, sticky="nwse")
-	tmpButton["command"] = lambda: wav[2].play()
+	tmpButton["command"] = lambda: decide()
 	
 	# match button
 	matchButton = Button(tkObj)
