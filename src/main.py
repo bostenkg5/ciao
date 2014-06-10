@@ -30,11 +30,12 @@ def matchDB():
 	fp = open(DBpath+'/list.txt', 'r')
 	for line in fp:
 		fm = DBpath + '/' + line[:-1] + '.wav'
+		tm = DBpath + '/' + line[:-1] + '.txt'
 		print 'processing', fm
 		wav = Wav(fm)
 		wav.load()
-		wav.play()
-		
+		# wav.play()
+		wav.loadTxt(tm)
 	
 	
 

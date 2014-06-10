@@ -9,9 +9,11 @@ SAVE_LENGTH = 43
 class Wav:
 	def __init__(self, fileName):
 		self.fileName = fileName
+		self.txtName = None
 		self.stringAudioData = None
 		self.audioData = None
-		self.feature = None
+		self.beat = None
+		
 
 	def record(self):
 		pa = PyAudio()
@@ -67,3 +69,27 @@ class Wav:
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
+		
+	# def load(self):
+		# wf = wave.open(self.fileName, 'rb')
+		# pa = PyAudio()
+		# stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
+						# channels=wf.getnchannels(),
+						# rate=wf.getframerate(),
+						# output=True)
+		
+		# data = wf.readframes(BUFFER_SIZE)
+		# while data != '':
+			# stream.write(data)
+			# data = wf.readframes(BUFFER_SIZE)
+
+		# stream.stop_stream()
+		# stream.close()
+		# pa.terminate()
+	
+	def loadTxt(self, fileName):
+		fp = open(fileName, 'r')
+		self.beat = [int(line) for line in fp]
+		print self.beat
+		fp.close()
+		
