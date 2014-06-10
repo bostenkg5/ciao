@@ -8,11 +8,10 @@ from tool1 import *
 from tool3 import *
 from Wav import *
 
-
-global dbNum
 DBpath = '../beatData'
 wav = []
 db = []
+dbName = []
 
 def init():
 	global wav
@@ -22,6 +21,12 @@ def init():
 	wav.append(w)
 	w = Wav('3.wav')
 	wav.append(w)
+	
+	global dbName
+	print 'database path:', DBpath
+	fp = open(DBpath+'/list.txt', 'r')
+	dbName = [line[:-1] for line in fp]
+	fp.close()
 
 def playMusic(n):
 	global db
@@ -55,8 +60,9 @@ def playMusic(n):
 
 	
 def startPlay():
-	global dbNum
-	index = int(dbNum.get())
+	global listbox
+	re = listbox.curselection()
+	index = int(re[0])
 	print 'index:', index
 	td = threading.Thread(target=startGame, args=[4]);
 	td.start()
@@ -80,9 +86,7 @@ def matchDB():
 		# wav.play()
 		wav.loadTxt(tm)
 		db = db + [wav]
-		print db
-	
-	
+	fp.close()
 
 def main():
 	print 'main start'
@@ -138,9 +142,14 @@ def main():
 	startButton.grid(columnspan=10, sticky="nwse")
 	startButton["command"] = lambda: startPlay()
 	
-	global dbNum
-	dbNum = Entry(tkObj, bd=10)
-	dbNum.grid(columnspan=10, sticky="nwse")
+	global listbox
+	listbox = Listbox(tkObj)
+	listbox.grid(columnspan=10, sticky="nwse")
+	
+	global dbName
+	print dbName
+	for d in dbName:
+		listbox.insert(END, d)
 	
 	tkObj.mainloop()
 	

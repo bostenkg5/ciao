@@ -90,6 +90,5 @@ class Wav:
 	def loadTxt(self, fileName):
 		fp = open(fileName, 'r')
 		self.beat = [int(line) for line in fp]
-		print self.beat
 		fp.close()
 		
