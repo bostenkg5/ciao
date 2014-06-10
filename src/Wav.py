@@ -14,6 +14,8 @@ class Wav:
 		self.stringAudioData = None
 		self.audioData = None
 		self.beat = None
+		self.vol = None
+		self.cutAudio = None
 		
 
 	def record(self):
@@ -44,6 +46,7 @@ class Wav:
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
+		self.cut()
 		
 	def play(self):
 		print "play %s" % (self.fileName)
@@ -70,23 +73,7 @@ class Wav:
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
-		
-	# def load(self):
-		# wf = wave.open(self.fileName, 'rb')
-		# pa = PyAudio()
-		# stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
-						# channels=wf.getnchannels(),
-						# rate=wf.getframerate(),
-						# output=True)
-		
-		# data = wf.readframes(BUFFER_SIZE)
-		# while data != '':
-			# stream.write(data)
-			# data = wf.readframes(BUFFER_SIZE)
-
-		# stream.stop_stream()
-		# stream.close()
-		# pa.terminate()
+		self.cut()
 	
 	def loadTxt(self, fileName):
 		fp = open(fileName, 'r')
@@ -95,6 +82,36 @@ class Wav:
 
 
 	def plot(self):
-		audio = self.audioData[:BUFFER_SIZE]
+		audio = self.audioData
 		plt.plot(audio)
 		plt.show()
+		
+	def plot2(self,w):
+		plt.plot(w)
+		plt.show()
+		
+	def calVol(self):
+		length = self.audioData.shape[0]
+		self.vol = [None]*length
+
+		for i in range(length):
+			ia = max((i-512,0))
+			ib = min((i+512,length-1))
+			v = self.audioData[ia:ib]
+			self.vol[i] = np.sum(np.abs(v))
+			
+	def cut(self):
+		self.calVol()
+		maxv = max(self.vol)
+		thv = 0.1*maxv
+		
+		length = self.audioData.shape[0]
+		ia = None
+		ib = None
+		for i in range(length):
+			if ia==None and self.vol[i]>thv:
+				ia = i
+			if ia!=None and ib==None and self.vol[i]<thv:
+				ib = i
+				break
+		self.cutAudio = self.audioData[ia:ib]

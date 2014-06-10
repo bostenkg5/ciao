@@ -8,6 +8,7 @@ from tool1 import *
 from tool3 import *
 from Wav import *
 
+
 DBpath = '../beatData'
 wav = []
 db = []
@@ -35,11 +36,14 @@ def playMusic(n):
 	print "play %s" % (wav.fileName)
 	wf = wave.open(wav.fileName, 'rb')
 	pa = PyAudio()
-	stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
+	i_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
+	o_stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
 					channels=wf.getnchannels(),
 					rate=wf.getframerate(),
 					output=True)
 	
+	
+	save_buffer = []
 	sampleSum = 0
 	beat = wav.beat
 	data = wf.readframes(BUFFER_SIZE)
@@ -49,14 +53,27 @@ def playMusic(n):
 			print '%d !!!!' % (sampleSum)
 			createBall(random.randrange(0,4))
 			beat = beat[1:]
-		stream.write(data)
+			
+		string_audio_data = i_stream.read(BUFFER_SIZE)
+		audio_data = np.fromstring(string_audio_data, dtype=np.short)
+		save_buffer.append( string_audio_data )
+		
+		o_stream.write(data)
 		data = wf.readframes(BUFFER_SIZE)
 		sampleSum = sampleSum + BUFFER_SIZE
-	exitGame()
-	stream.stop_stream()
-	stream.close()
+		
+	
+	o_stream.stop_stream()
+	o_stream.close()
 	pa.terminate()
 	print 'end database %d' % (n)
+	
+	wf = wave.open('tmp.wav', 'wb')
+	wf.setnchannels(1)
+	wf.setsampwidth(2)
+	wf.setframerate(SAMPLING_RATE)
+	wf.writeframes("".join(save_buffer))
+	wf.close()
 
 	
 def startPlay():
@@ -71,7 +88,7 @@ def startPlay():
 	# td = threading.Thread(target=playMusic, args=[0]);
 	# td.start()
 	playMusic(index)
-	
+	exitGame()
 	
 def matchDB():
 	global db
@@ -124,11 +141,23 @@ def main():
 	playButton2.grid(columnspan=10, sticky="nwse")
 	playButton2["command"] = lambda: wav[1].play()
 	
+	# play button3
+	playButton3 = Button(tkObj)
+	playButton3["text"] = 'play3'
+	playButton3.grid(columnspan=10, sticky="nwse")
+	playButton3["command"] = lambda: wav[2].play()
+	
 	# tmp button
 	tmpButton = Button(tkObj)
 	tmpButton["text"] = 'tmp'
 	tmpButton.grid(columnspan=10, sticky="nwse")
 	tmpButton["command"] = lambda: decide()
+	
+	# tmp button
+	tmpButton2 = Button(tkObj)
+	tmpButton2["text"] = 'vol'
+	tmpButton2.grid(columnspan=10, sticky="nwse")
+	tmpButton2["command"] = lambda: wav[0].cut()
 	
 	# match button
 	matchButton = Button(tkObj)
