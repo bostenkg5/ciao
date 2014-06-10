@@ -45,17 +45,12 @@ class Wav:
 		
 	def play(self):
 		print "play %s" % (self.fileName)
-		wf = wave.open(self.fileName, 'rb')
 		pa = PyAudio()
-		stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
-						channels=wf.getnchannels(),
-						rate=wf.getframerate(),
-						output=True)
+		stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, output=True, frames_per_buffer=BUFFER_SIZE)
 		
 		stream.write(self.stringAudioData)
 
 		stream.stop_stream()
 		stream.close()
-		wf.close()
 		pa.terminate()
 		
