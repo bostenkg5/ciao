@@ -18,7 +18,6 @@ class Wav:
 		in_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
 		save_count = 0
 		save_buffer = []
-		save_data   = None
 
 		save_count = SAVE_LENGTH
 		
@@ -53,4 +52,18 @@ class Wav:
 		stream.stop_stream()
 		stream.close()
 		pa.terminate()
-		
+	
+	def load(self):
+		pa = PyAudio()
+		wf = wave.open(self.fileName, 'rb')
+		save_buffer = []
+		string_audio_data = wf.readframes(BUFFER_SIZE)
+		while string_audio_data != '':
+			audio_data = np.fromstring(string_audio_data, dtype=np.short)
+			save_buffer.append( string_audio_data )
+			string_audio_data = wf.readframes(BUFFER_SIZE)
+
+		pa.terminate()
+		self.stringAudioData = "".join(save_buffer)
+		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
+		self.audioData = save_data

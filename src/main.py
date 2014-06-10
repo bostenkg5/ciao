@@ -9,6 +9,7 @@ from Wav import *
 DBpath = '../beatData'
 wav1 = None
 wav2 = None
+db = []
 
 
 def init():
@@ -28,7 +29,12 @@ def matchDB():
 	print 'database path:', DBpath
 	fp = open(DBpath+'/list.txt', 'r')
 	for line in fp:
-		print 'processing', line
+		fm = DBpath + '/' + line[:-1] + '.wav'
+		print 'processing', fm
+		wav = Wav(fm)
+		wav.load()
+		wav.play()
+		
 	
 	
 
