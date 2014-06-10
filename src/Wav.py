@@ -73,7 +73,6 @@ class Wav:
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
-		self.cut()
 	
 	def loadTxt(self, fileName):
 		fp = open(fileName, 'r')
