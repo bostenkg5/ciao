@@ -4,11 +4,15 @@ from Tkinter import *
 from PIL import Image, ImageTk
 import random
 global canvas
-global im
+global ball
+global openBall
+global index
 
 def startGame(number):
 	global canvas
 	global im
+	global ball
+	global openBall
 	tkObj = Tk()
 	canvas = Canvas(tkObj, width = 1200, height = 400)
 	canvas.pack()
@@ -16,39 +20,33 @@ def startGame(number):
 	canvas.create_image(600,100,image=background)
 	x0 = 10
 	dx = 2
-	noBall = True
 	image = []
 	im = []
 	ball = []
+	openBall = False
 	for i in range(number):
 		image.append(Image.open("../resource/ball"+str(i)+".png"))
 		image[i] = image[i].resize((100,100),Image.BICUBIC)
 		im.append(ImageTk.PhotoImage(image[i],master = canvas))
-	
-	 # while True:
-		# if noBall == True :
-			# index = random.randint(0,number-1)
-			# print index
-			# x0 = 10
-			# ball.append(createBall(index,number))
-			# noBall = False
-		# if x0 >= 500:
-			# #canvas.delete(which)
-			# noBall = True
-		# else :
-			# x0 += dx
-			# goBalls(ball)
+	createBall(2)
+	while True:
+		if openBall == True :
+			x0 = 10
+			y0 = (400/number)*index+50
+			ball.append(canvas.create_image(x0,y0,image=im[index]))
+			openBall = False
+		goBalls()
 	tkObj.mainloop()
 
-def createBall(index,number):
-	global im
+def createBall(_index):
+	global openBall
+	global index
+	openBall = True
+	index = _index
+
+def goBalls():
 	global canvas
-	x0 = 10
-	y0 = (400/number)*index+50
-	ball = canvas.create_image(x0,y0,image=im[index])
-	return ball
-def goBalls(ball):
-	global canvas
+	global ball
 	dx = 2
 	for i in ball :
 		canvas.move(i, dx, 0)
