@@ -15,7 +15,6 @@ class Wav:
 	def record(self):
 		pa = PyAudio()
 		in_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
-		out_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE,output=True)
 		save_count = 0
 		save_buffer = []
 		save_data   = []
@@ -63,3 +62,5 @@ class Wav:
 		stream.close()
 		wf.close()
 		pa.terminate()
+		
+	# def getFeature(self):

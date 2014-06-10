@@ -2,7 +2,6 @@
 from pyaudio import PyAudio, paInt16
 from datetime import datetime 
 
-import matplotlib.pyplot as plt
 import numpy as np
 import wave
 import sys
