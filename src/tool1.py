@@ -70,17 +70,11 @@ def pitch_tracking():
 		
 		idx = np.argmax(xfp)
 		pitches.append(idx)
+		
+		print freqs[idx]
 
-		if pitches.count(idx)>20:
-			break
+		# if pitches.count(idx)>40:
+			# break
 
-	print freqs[idx]
-
-	
-					   
-					   
-
-
-					   
 
 

@@ -31,3 +31,5 @@ def play(wavName='tmp.wav'):
 
 	pa.terminate()
 	
+	pitch_tracking()
+	
