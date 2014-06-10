@@ -12,7 +12,7 @@ SAVE_LENGTH = 40
 
 
 
-def record(wav):
+def record():
 
 	pa = PyAudio()
 	in_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
@@ -29,15 +29,16 @@ def record(wav):
 		string_audio_data = in_stream.read(BUFFER_SIZE)
 		audio_data = np.fromstring(string_audio_data, dtype=np.short)
 		
+		print type(audio_data)
 		save_buffer.append( string_audio_data )
 		save_data.append( audio_data )
 
 		save_count = save_count - 1
 
-	print 'save %s' % (wav.fileName)
-	save_wave_file(wav.fileName, save_buffer)
-	
-	pa.terminate()
+#print 'save %s' % (wav.fileName)
+#save_wave_file(wav.fileName, save_buffer)
+		save_wave_file("test.wav", save_buffer)
+		pa.terminate()
 
 
 
