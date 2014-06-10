@@ -94,7 +94,6 @@ def main():
 	recordButton1 = Button(tkObj)
 	recordButton1["text"] = 'record1'
 	recordButton1.grid(columnspan=10, sticky="nwse")
-	# recordButton["command"] = lambda: record(wav1)
 	recordButton1["command"] = lambda: wav[0].record()
 	
 	# record button2
