@@ -25,10 +25,10 @@ def startPlay():
 	print 'start play'
 	
 def matchDB():
-	print DBpath
+	print 'database path:', DBpath
 	fp = open(DBpath+'/list.txt', 'r')
 	for line in fp:
-		print '~', line
+		print 'processing', line
 	
 	
 
