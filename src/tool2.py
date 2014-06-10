@@ -28,7 +28,6 @@ def startGame(number):
 		image.append(Image.open("../resource/ball"+str(i)+".png"))
 		image[i] = image[i].resize((100,100),Image.BICUBIC)
 		im.append(ImageTk.PhotoImage(image[i],master = canvas))
-	createBall(2)
 	while True:
 		if openBall == True :
 			x0 = 10

@@ -1,22 +1,27 @@
 import os
 import sys
 import threading
+import time
+import random
 from Tkinter import *
 from tool1 import *
 from tool3 import *
 from Wav import *
 
+
+global dbNum
 DBpath = '../beatData'
-wav1 = None
-wav2 = None
+wav = []
 db = []
 
-
 def init():
-	global wav1
-	global wav2
-	wav1 = Wav('1.wav')
-	wav2 = Wav('2.wav')
+	global wav
+	w = Wav('1.wav')
+	wav.append(w)
+	w = Wav('2.wav')
+	wav.append(w)
+	w = Wav('3.wav')
+	wav.append(w)
 
 def playMusic(n):
 	global db
@@ -37,6 +42,7 @@ def playMusic(n):
 	while data != '':
 		if len(beat)>0 and sampleSum>=beat[0]:
 			print '%d !!!!' % (sampleSum)
+			createBall(random.randrange(0,4))
 			beat = beat[1:]
 		stream.write(data)
 		data = wf.readframes(BUFFER_SIZE)
@@ -46,12 +52,19 @@ def playMusic(n):
 	stream.close()
 	pa.terminate()
 	print 'end database %d' % (n)
+
 	
 def startPlay():
-	global wav1
-	td = threading.Thread(target=playMusic, args=[0]);
+	global dbNum
+	index = int(dbNum.get())
+	print 'index:', index
+	td = threading.Thread(target=startGame, args=[4]);
 	td.start()
-	# playMusic(0)
+	# td = threading.Thread(target=startGame, args=[4]);
+	# td.start()
+	# td = threading.Thread(target=playMusic, args=[0]);
+	# td.start()
+	playMusic(index)
 	
 	
 def matchDB():
@@ -78,29 +91,41 @@ def main():
 	tkObj = Tk()
 	
 	# record button1
-	recordButton = Button(tkObj)
-	recordButton["text"] = 'record1'
-	recordButton.grid(columnspan=10, sticky="nwse")
+	recordButton1 = Button(tkObj)
+	recordButton1["text"] = 'record1'
+	recordButton1.grid(columnspan=10, sticky="nwse")
 	# recordButton["command"] = lambda: record(wav1)
-	recordButton["command"] = lambda: wav1.record()
+	recordButton1["command"] = lambda: wav[0].record()
 	
 	# record button2
-	recordButton = Button(tkObj)
-	recordButton["text"] = 'record2'
-	recordButton.grid(columnspan=10, sticky="nwse")
-	recordButton["command"] = lambda: wav2.record()
+	recordButton2 = Button(tkObj)
+	recordButton2["text"] = 'record2'
+	recordButton2.grid(columnspan=10, sticky="nwse")
+	recordButton2["command"] = lambda: wav[1].record()
+	
+	# record button3
+	recordButton3 = Button(tkObj)
+	recordButton3["text"] = 'record3'
+	recordButton3.grid(columnspan=10, sticky="nwse")
+	recordButton3["command"] = lambda: wav[2].record()
 	
 	# play button1
-	playButton = Button(tkObj)
-	playButton["text"] = 'play1'
-	playButton.grid(columnspan=10, sticky="nwse")
-	playButton["command"] = lambda: wav1.play()
+	playButton1 = Button(tkObj)
+	playButton1["text"] = 'play1'
+	playButton1.grid(columnspan=10, sticky="nwse")
+	playButton1["command"] = lambda: wav[0].play()
 	
 	# play button2
-	playButton = Button(tkObj)
-	playButton["text"] = 'play2'
-	playButton.grid(columnspan=10, sticky="nwse")
-	playButton["command"] = lambda: wav2.play()
+	playButton2 = Button(tkObj)
+	playButton2["text"] = 'play2'
+	playButton2.grid(columnspan=10, sticky="nwse")
+	playButton2["command"] = lambda: wav[1].play()
+	
+	# tmp button
+	tmpButton = Button(tkObj)
+	tmpButton["text"] = 'tmp'
+	tmpButton.grid(columnspan=10, sticky="nwse")
+	tmpButton["command"] = lambda: wav[2].play()
 	
 	# match button
 	matchButton = Button(tkObj)
@@ -114,6 +139,9 @@ def main():
 	startButton.grid(columnspan=10, sticky="nwse")
 	startButton["command"] = lambda: startPlay()
 	
+	global dbNum
+	dbNum = Entry(tkObj, bd=10)
+	dbNum.grid(columnspan=10, sticky="nwse")
 	
 	tkObj.mainloop()
 	
