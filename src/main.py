@@ -52,7 +52,7 @@ def playMusic(n):
 		stream.write(data)
 		data = wf.readframes(BUFFER_SIZE)
 		sampleSum = sampleSum + BUFFER_SIZE
-
+	exitGame()
 	stream.stop_stream()
 	stream.close()
 	pa.terminate()
@@ -147,7 +147,6 @@ def main():
 	listbox.grid(columnspan=10, sticky="nwse")
 	
 	global dbName
-	print dbName
 	for d in dbName:
 		listbox.insert(END, d)
 	
