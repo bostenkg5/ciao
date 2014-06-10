@@ -41,11 +41,14 @@ def startGame(number):
 	tkObj.mainloop()
 
 def createBall(index,number):
+	global im
+	global canvas
 	x0 = 10
 	y0 = (400/number)*index+50
 	ball = canvas.create_image(x0,y0,image=im[index])
 	return ball
 def goBalls(ball):
+	global canvas
 	dx = 2
 	for i in ball :
 		canvas.move(i, dx, 0)
