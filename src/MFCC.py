@@ -18,6 +18,7 @@
 from numpy import *
 from numpy.linalg import *
 from matplotlib.pyplot import *
+from scipy.spatial import distance
 
 def hamming(n):
     """
@@ -132,3 +133,13 @@ def show_MFCC_spectrum(mfcc):
     title("MFCC spectrum")
     xlabel("Frame")
     ylabel("Band")
+
+def calc_MFCC_dist(m1,m2):
+	f1 = np.array(m1.flatten())
+	f2 = np.array(m2.flatten())
+
+	return distance.cosine(f1,f2)
+
+
+
+
