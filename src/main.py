@@ -26,6 +26,7 @@ def startPlay():
 	print 'start play'
 	
 def matchDB():
+	global db
 	print 'database path:', DBpath
 	fp = open(DBpath+'/list.txt', 'r')
 	for line in fp:
@@ -36,6 +37,8 @@ def matchDB():
 		wav.load()
 		# wav.play()
 		wav.loadTxt(tm)
+		db = db + [wav]
+		print db
 	
 	
 
