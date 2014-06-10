@@ -64,12 +64,14 @@ def startGame(number):
 		checkComment()
 	tkObj.mainloop()
 
+# Create balls
 def createBall(_index):
 	global openBall
 	global index
 	openBall = True
 	index = _index
 
+# Run all balls on the window
 def goBalls():
 	global canvas
 	global ball
@@ -78,6 +80,8 @@ def goBalls():
 		canvas.move(i, dx, 0)
 	canvas.after(10)
 	canvas.update()
+	
+# Check all comment is timeout or not
 def checkComment():
 	global comments
 	global canvas
@@ -86,9 +90,13 @@ def checkComment():
 		if i.isTimeOut() :
 			canvas.delete(i.getImg())
 			comments.remove(i)
+			
+# Exit the Game
 def exitGame():
 	global exiting
 	exiting = True
+	
+# Deliver comments
 def judgeComment(_comment,_index):
 	global isComment
 	global commentIndex
