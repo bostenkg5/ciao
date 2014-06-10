@@ -17,13 +17,42 @@ def init():
 	global wav2
 	wav1 = Wav('1.wav')
 	wav2 = Wav('2.wav')
+
+def playMusic(n):
+	global db
+	print 'play database %d' % (n)
+	wav = db[n]
+	print "play %s" % (wav.fileName)
+	wf = wave.open(wav.fileName, 'rb')
+	pa = PyAudio()
+	stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
+					channels=wf.getnchannels(),
+					rate=wf.getframerate(),
+					output=True)
+	
+	sampleSum = 0
+	beat = wav.beat
+	data = wf.readframes(BUFFER_SIZE)
+	sampleSum = sampleSum + BUFFER_SIZE
+	while data != '':
+		if len(beat)>0 and sampleSum>=beat[0]:
+			print '%d !!!!' % (sampleSum)
+			beat = beat[1:]
+		stream.write(data)
+		data = wf.readframes(BUFFER_SIZE)
+		sampleSum = sampleSum + BUFFER_SIZE
+
+	stream.stop_stream()
+	stream.close()
+	pa.terminate()
+	print 'end database %d' % (n)
 	
 def startPlay():
 	global wav1
-	td = threading.Thread(target=startGame, args=[2]);
+	td = threading.Thread(target=playMusic, args=[0]);
 	td.start()
+	# playMusic(0)
 	
-	print 'start play'
 	
 def matchDB():
 	global db

@@ -45,5 +45,5 @@ def getWavFeature(wavName):
 	stream.stop_stream()
 	stream.close()
 	pa.terminate()
-	
+
 	
