@@ -1,10 +1,12 @@
 import os
 import sys
+import threading
 from Tkinter import *
 from tool1 import *
 from tool3 import *
 from Wav import *
 
+DBpath = '../beatData'
 wav1 = None
 wav2 = None
 
@@ -14,6 +16,21 @@ def init():
 	global wav2
 	wav1 = Wav('1.wav')
 	wav2 = Wav('2.wav')
+	
+def startPlay():
+	global wav1
+	td = threading.Thread(target=startGame, args=[2]);
+	td.start()
+	
+	print 'start play'
+	
+def matchDB():
+	print DBpath
+	fp = open(DBpath+'/list.txt', 'r')
+	for line in fp:
+		print '~', line
+	
+	
 
 def main():
 	print 'main start'
@@ -34,23 +51,30 @@ def main():
 	recordButton.grid(columnspan=10, sticky="nwse")
 	recordButton["command"] = lambda: wav2.record()
 	
-	# play button
+	# play button1
 	playButton = Button(tkObj)
 	playButton["text"] = 'play1'
 	playButton.grid(columnspan=10, sticky="nwse")
 	playButton["command"] = lambda: wav1.play()
 	
-	# play button
+	# play button2
 	playButton = Button(tkObj)
 	playButton["text"] = 'play2'
 	playButton.grid(columnspan=10, sticky="nwse")
 	playButton["command"] = lambda: wav2.play()
 	
-	# play button
-	featButton = Button(tkObj)
-	featButton["text"] = 'feature1'
-	featButton.grid(columnspan=10, sticky="nwse")
-	featButton["command"] = lambda: wav1.getFeature()	
+	# match button
+	matchButton = Button(tkObj)
+	matchButton["text"] = 'match database'
+	matchButton.grid(columnspan=10, sticky="nwse")
+	matchButton["command"] = lambda: matchDB()
+	
+	# start game button
+	startButton = Button(tkObj)
+	startButton["text"] = 'start game'
+	startButton.grid(columnspan=10, sticky="nwse")
+	startButton["command"] = lambda: startPlay()
+	
 	
 	tkObj.mainloop()
 	
