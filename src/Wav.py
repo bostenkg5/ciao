@@ -7,7 +7,7 @@ from scipy.spatial import distance
 
 BUFFER_SIZE = 1024
 SAMPLING_RATE = 44032   # about 22050 * 2
-SAVE_LENGTH = 43
+SAVE_LENGTH = 43*2
 
 class Wav:
 	def __init__(self, fileName):
@@ -67,7 +67,6 @@ class Wav:
 		pa.terminate()
 	
 	def load(self):
-		print 'load', self.fileName
 		pa = PyAudio()
 		wf = wave.open(self.fileName, 'rb')
 		save_buffer = []
@@ -81,24 +80,11 @@ class Wav:
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
-		
+			
 		self.cut2()
 		self.getFeature()
-	
-	def loaddb(self):
-		pa = PyAudio()
-		wf = wave.open(self.fileName, 'rb')
-		save_buffer = []
-		string_audio_data = wf.readframes(BUFFER_SIZE)
-		while string_audio_data != '':
-			audio_data = np.fromstring(string_audio_data, dtype=np.short)
-			save_buffer.append( string_audio_data )
-			string_audio_data = wf.readframes(BUFFER_SIZE)
 
-		pa.terminate()
-		self.stringAudioData = "".join(save_buffer)
-		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
-		self.audioData = save_data
+
 		
 	def loadTxt(self, fileName):
 		fp = open(fileName, 'r')

@@ -11,7 +11,7 @@ from MFCC import extract
 
 
 BUFFER_SIZE = 1024
-SAMPLING_RATE = 44000   # about 22050 * 2
+SAMPLING_RATE = 44032   # about 22050 * 2
 SAVE_LENGTH = 40
 
 
@@ -101,22 +101,21 @@ def decide():
 	wav3=Wav('3.wav')
 	wav3.load()
 	
-	s1 = wav1.cutAudio
-	s2 = wav2.cutAudio
-	s3 = wav3.cutAudio
-	
-	
-	dist13 = calc_MFCC_dist(s1,s3)
-	#dist13 +=calc_pitch_dist(s1,s3)
+	dist13 = calc_MFCC_dist(wav1.feature, wav3.feature)
+	cos13  = calc_MFCC_cosine_dist(wav1.feature, wav3.feature)
 
-	dist23 = calc_MFCC_dist(s2, s3)
-	#dist23 +=calc_pitch_dist(s2, s3)
+	dist23 = calc_MFCC_dist(wav2.feature, wav3.feature)
+	cos23  = calc_MFCC_cosine_dist(wav2.feature, wav3.feature)
 	
-	print "dist13",calc_MFCC_dist(s1,s3)
-	print "pitch13",calc_pitch_dist(s1, s3)
+	print "dist13",dist13
+	print "dist23",dist23
 	
-	print "dist23",calc_MFCC_dist(s2,s3)
-	print "pitch23",calc_pitch_dist(s2, s3)
+	print "cos13",cos13
+	print "cos23",cos23
+
+	
+	#print "pitch13",calc_pitch_dist(s1, s3)
+	#print "pitch23",calc_pitch_dist(s2, s3)
 
 	if dist13 < dist23:
 		print 1
@@ -126,11 +125,10 @@ def decide():
 		return 2
 
 def calc_MFCC_dist(m1,m2):
-	f1 = extract( np.asarray( m1.flatten()))
-	f2 = extract( np.asarray( m2.flatten()))
+	return distance.euclidean(m1.flatten(), m2.flatten())
 
-	return distance.euclidean(f1.flatten(), f2.flatten())
-#	return distance.cosine(f1.flatten(), f2.flatten())
+def calc_MFCC_cosine_dist(m1,m2):
+	return distance.cosine(m1.flatten(), m2.flatten())
 
 def calc_pitch_dist(m1,m2):
 	p1 = get_pitch(m1)
