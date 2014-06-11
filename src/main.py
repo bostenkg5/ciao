@@ -47,20 +47,23 @@ def playMusic(n):
 	sampleSum = 0
 	beat = wav.beat
 	beatAudio = wav.beatAudio
+	ans = wav.ans
 	data = wf.readframes(BUFFER_SIZE)
 	sampleSum = sampleSum + BUFFER_SIZE
 	while data != '':
 		if len(beat)>1 and sampleSum>=beat[0] - 4.9*44032 and sampleSum<=beat[1] - 4.9*44032:
-			createBall(random.randrange(0,4))
+			createBall(ans[0])
 			beat = beat[1:]
+			ans = ans[1:]
 		elif len(beat)>0 and sampleSum>=beat[0] - 4.9*44032:
 			# print '%d !!!!' % (sampleSum)
-			createBall(random.randrange(0,4))
+			createBall(ans[0])
 			#judgeComment(random.randrange(0,3),random.randrange(0,4))
-			beat = beat[1:]
+			ans = ans[1:]
 
 		string_audio_data = i_stream.read(BUFFER_SIZE)	
 		if len(beatAudio)>0 and sampleSum>=beatAudio[0][1]:
+			print 's'
 			print sampleSum
 			wf2 = wave.open('tmp/%d.wav' % (sampleSum), 'wb')
 			wf2.setnchannels(1)
@@ -71,6 +74,7 @@ def playMusic(n):
 			save_buffer = []
 			beatAudio = beatAudio[1:]
 		elif len(beatAudio)>0 and sampleSum>=beatAudio[0][0]:
+			print 'w'
 			audio_data = np.fromstring(string_audio_data, dtype=np.short)
 			save_buffer.append( string_audio_data )
 		
@@ -102,17 +106,18 @@ def startPlay():
 	
 def matchDB():
 	global db
+	global wav
 	print 'database path:', DBpath
 	fp = open(DBpath+'/list.txt', 'r')
 	for line in fp:
 		fm = DBpath + '/' + line[:-1] + '.wav'
 		tm = DBpath + '/' + line[:-1] + '.txt'
 		print 'processing', fm
-		wav = Wav(fm)
-		wav.load()
-		# wav.play()
-		wav.loadTxt(tm)
-		db = db + [wav]
+		wavd = Wav(fm)
+		wavd.load()
+		wavd.loadTxt(tm)
+		wavd.match(wav)
+		db = db + [wavd]
 	fp.close()
 
 def main():
@@ -167,7 +172,7 @@ def main():
 	tmpButton2 = Button(tkObj)
 	tmpButton2["text"] = 'vol'
 	tmpButton2.grid(columnspan=10, sticky="nwse")
-	tmpButton2["command"] = lambda: db[0].match(wav)
+	tmpButton2["command"] = lambda: db[1].match(wav)
 	
 	# match button
 	matchButton = Button(tkObj)

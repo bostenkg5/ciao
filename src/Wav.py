@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import wave
 from MFCC import extract
+from scipy.spatial import distance
 
 BUFFER_SIZE = 1024
 SAMPLING_RATE = 44032   # about 22050 * 2
@@ -147,6 +148,15 @@ class Wav:
 		self.feature = f
 	
 	def match(self, wav):
-		for w in wav:
-			print w
+		self.ans = []
+		for b in self.beatAudio:
+			x = self.audioData[b[0]:b[1]]
+			xf = extract( np.asarray(x)).flatten()
+			
+			d = []
+			for w in wav:
+				d = d + [distance.euclidean(xf, w.feature)]
+			self.ans = self.ans + [d.index(min(d))]
+				
+		print self.ans
 
