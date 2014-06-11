@@ -64,15 +64,15 @@ def dctmtx(n):
     D[0] /= sqrt(2)
     return D
 
-FS = 16000                              # Sampling rate
+FS = 44032                              # Sampling rate
 FRAME_LEN = int(0.02 * FS)              # Frame length
 FRAME_SHIFT = int(0.01 * FS)            # Frame shift
-FFT_SIZE = 2048                         # How many points for FFT
+FFT_SIZE = 1024                         # How many points for FFT
 WINDOW = hamming(FRAME_LEN)             # Window function
 PRE_EMPH = 0.95                         # Pre-emphasis factor
 
 BANDS = 40                              # Number of Mel filters
-COEFS = 13                              # Number of Mel cepstra coefficients to keep
+COEFS = 26                              # Number of Mel cepstra coefficients to keep
 POWER_SPECTRUM_FLOOR = 1e-100           # Flooring for the power to avoid log(0)
 M, CF = melfb(BANDS, FFT_SIZE, FS)      # The Mel filterbank matrix and the center frequencies of each band
 D = dctmtx(BANDS)[1:COEFS+1]            # The DCT matrix. Change the index to [0:COEFS] if you want to keep the 0-th coefficient
