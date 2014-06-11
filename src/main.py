@@ -49,10 +49,13 @@ def playMusic(n):
 	data = wf.readframes(BUFFER_SIZE)
 	sampleSum = sampleSum + BUFFER_SIZE
 	while data != '':
-		if len(beat)>0 and sampleSum>=beat[0]:
+		if len(beat)>1 and sampleSum>=beat[0] - 4.9*44032 and sampleSum<=beat[1] - 4.9*44032:
+			createBall(random.randrange(0,4))
+			beat = beat[1:]
+		elif len(beat)>0 and sampleSum>=beat[0] - 4.9*44032:
 			print '%d !!!!' % (sampleSum)
 			createBall(random.randrange(0,4))
-			judgeComment(random.randrange(0,3),random.randrange(0,4))
+			#judgeComment(random.randrange(0,3),random.randrange(0,4))
 			beat = beat[1:]
 			
 		string_audio_data = i_stream.read(BUFFER_SIZE)

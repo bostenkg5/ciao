@@ -4,8 +4,9 @@ from Tkinter import *
 from PIL import Image, ImageTk
 import random
 from comment import *
+from ball import *
 global canvas
-global ball
+global balls
 global openBall
 global index
 global exiting
@@ -17,7 +18,7 @@ global commentNum
 def startGame(number):
 	global canvas
 	global im
-	global ball
+	global balls
 	global openBall
 	global exiting
 	global comments
@@ -33,7 +34,7 @@ def startGame(number):
 	dx = 2
 	image = []
 	im = []
-	ball = []
+	balls = []
 	openBall = False
 	exiting = False
 	isComment = False
@@ -50,7 +51,7 @@ def startGame(number):
 		if openBall == True :
 			x0 = 10
 			y0 = (400/number)*index+50
-			ball.append(canvas.create_image(x0,y0,image=im[index]))
+			balls.append(ball(canvas.create_image(x0,y0,image=im[index])))
 			openBall = False
 		if isComment == True :
 			isComment = False
@@ -62,6 +63,7 @@ def startGame(number):
 			tkObj.destroy()
 		goBalls()
 		checkComment()
+		checkBall()
 	tkObj.mainloop()
 
 # Create balls
@@ -74,11 +76,11 @@ def createBall(_index):
 # Run all balls on the window
 def goBalls():
 	global canvas
-	global ball
-	dx = 2
-	for i in ball :
-		canvas.move(i, dx, 0)
-	canvas.after(10)
+	global balls
+	dx = 10
+	for i in balls :
+		canvas.move(i.getImg(), dx, 0)
+	canvas.after(50)
 	canvas.update()
 	
 # Check all comment is timeout or not
@@ -90,6 +92,16 @@ def checkComment():
 		if i.isTimeOut() :
 			canvas.delete(i.getImg())
 			comments.remove(i)
+			
+# Check all ball is timeout or not
+def checkBall():
+	global comments
+	global canvas
+	for i in balls :
+		i.timerAdd()
+		if i.isTimeOut() :
+			canvas.delete(i.getImg())
+			balls.remove(i)
 			
 # Exit the Game
 def exitGame():
