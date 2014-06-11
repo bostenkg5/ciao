@@ -67,6 +67,7 @@ class Wav:
 		pa.terminate()
 	
 	def load(self):
+		print 'load', self.fileName
 		pa = PyAudio()
 		wf = wave.open(self.fileName, 'rb')
 		save_buffer = []
@@ -103,7 +104,7 @@ class Wav:
 		fp = open(fileName, 'r')
 		self.beat = [int(line) for line in fp]
 		fp.close()
-		self.beatAudio = [(max(0,b-5000),min(b+5000,len(self.audioData)-1)) for b in self.beat]
+		self.beatAudio = [(max(0,b-4608),min(b+4608,len(self.audioData)-1)) for b in self.beat]
 
 	def plot(self):
 		audio = self.audioData
@@ -126,7 +127,7 @@ class Wav:
 
 
 	def cut2(self):
-		rad = 5000
+		rad = 4608
 		self.calVol()
 		maxv = max(self.vol)
 		mid  = np.argmax(self.vol)

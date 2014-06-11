@@ -7,7 +7,8 @@ from Tkinter import *
 from tool1 import *
 from tool3 import *
 from Wav import *
-
+from MFCC import extract
+from scipy.spatial import distance
 
 DBpath = '../beatData'
 wav = []
@@ -29,6 +30,14 @@ def init():
 	dbName = [line[:-1] for line in fp]
 	fp.close()
 
+def howGood(audio_data, ans, pos):
+	f1 = extract( np.asarray(audio_data))
+	f1 = f1.flatten()
+	f2 = extract( np.asarray(ans))
+	f2 = f2.flatten()
+	print distance.euclidean(f1, f2)
+	judgeComment(0,pos)
+
 def playMusic(n):
 	global db
 	print 'play database %d' % (n)
@@ -48,35 +57,41 @@ def playMusic(n):
 	beat = wav.beat
 	beatAudio = wav.beatAudio
 	ans = wav.ans
+	ans2 = wav.ans
 	data = wf.readframes(BUFFER_SIZE)
 	sampleSum = sampleSum + BUFFER_SIZE
 	while data != '':
-		if len(beat)>1 and sampleSum>=beat[0] - 4.9*44032 and sampleSum<=beat[1] - 4.9*44032:
+		if len(beat)>1 and sampleSum>=beat[0] - 5.0*44032 and sampleSum<=beat[1] - 5.0*44032:
 			createBall(ans[0])
 			beat = beat[1:]
 			ans = ans[1:]
-		elif len(beat)>0 and sampleSum>=beat[0] - 4.9*44032:
+		elif len(beat)>0 and sampleSum>=beat[0] - 5.0*44032:
 			# print '%d !!!!' % (sampleSum)
 			createBall(ans[0])
-			#judgeComment(random.randrange(0,3),random.randrange(0,4))
 			beat = beat[1:]
 			ans = ans[1:]
 
 		string_audio_data = i_stream.read(BUFFER_SIZE)	
 		if len(beatAudio)>0 and sampleSum>=beatAudio[0][1]:
 			print 's'
-			print sampleSum
 			wf2 = wave.open('tmp/%d.wav' % (sampleSum), 'wb')
 			wf2.setnchannels(1)
 			wf2.setsampwidth(2)
 			wf2.setframerate(SAMPLING_RATE)
 			wf2.writeframes("".join(save_buffer))
 			wf2.close()
+			
+			audio_data = np.fromstring("".join(save_buffer), dtype=np.short)
+			audio_data = audio_data[:9216]
+
+			td = threading.Thread(target=howGood, args=[audio_data, wav.audioData[beatAudio[0][0]:beatAudio[0][1]], ans2[0]]);
+			td.start()
+
 			save_buffer = []
 			beatAudio = beatAudio[1:]
+			ans2 = ans2[1:]
 		elif len(beatAudio)>0 and sampleSum>=beatAudio[0][0]:
 			print 'w'
-			audio_data = np.fromstring(string_audio_data, dtype=np.short)
 			save_buffer.append( string_audio_data )
 		
 		o_stream.write(data)
@@ -121,11 +136,23 @@ def matchDB():
 		db = db + [wavd]
 	fp.close()
 
+def loadRecord():
+	global wav
+	for w in wav:
+		w.load()
+
 def main():
 	print 'main start'
 	global wav
 	init()
 	tkObj = Tk()
+	
+	
+	# record button0
+	recordButton0 = Button(tkObj)
+	recordButton0["text"] = 'load record'
+	recordButton0.grid(columnspan=10, sticky="nwse")
+	recordButton0["command"] = lambda: loadRecord()
 	
 	# record button1
 	recordButton1 = Button(tkObj)
