@@ -59,6 +59,7 @@ def playMusic(n):
 			# print '%d !!!!' % (sampleSum)
 			createBall(ans[0])
 			#judgeComment(random.randrange(0,3),random.randrange(0,4))
+			beat = beat[1:]
 			ans = ans[1:]
 
 		string_audio_data = i_stream.read(BUFFER_SIZE)	
@@ -114,7 +115,7 @@ def matchDB():
 		tm = DBpath + '/' + line[:-1] + '.txt'
 		print 'processing', fm
 		wavd = Wav(fm)
-		wavd.load()
+		wavd.loaddb()
 		wavd.loadTxt(tm)
 		wavd.match(wav)
 		db = db + [wavd]
