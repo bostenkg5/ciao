@@ -117,7 +117,7 @@ def matchDB():
 
 def main():
 	print 'main start'
-	
+	global wav
 	init()
 	tkObj = Tk()
 	
@@ -167,7 +167,7 @@ def main():
 	tmpButton2 = Button(tkObj)
 	tmpButton2["text"] = 'vol'
 	tmpButton2.grid(columnspan=10, sticky="nwse")
-	tmpButton2["command"] = lambda: wav[0].cut()
+	tmpButton2["command"] = lambda: db[0].match(wav)
 	
 	# match button
 	matchButton = Button(tkObj)
@@ -188,6 +188,12 @@ def main():
 	global dbName
 	for d in dbName:
 		listbox.insert(END, d)
+		
+	# end button
+	endButton = Button(tkObj)
+	endButton["text"] = 'end'
+	endButton.grid(columnspan=10, sticky="nwse")
+	endButton["command"] = lambda: tkObj.destroy()
 	
 	tkObj.mainloop()
 	

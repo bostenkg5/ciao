@@ -2,6 +2,7 @@ from pyaudio import PyAudio, paInt16
 import matplotlib.pyplot as plt
 import numpy as np
 import wave
+from MFCC import extract
 
 BUFFER_SIZE = 1024
 SAMPLING_RATE = 44032   # about 22050 * 2
@@ -17,6 +18,8 @@ class Wav:
 		self.beatAudio = None
 		self.vol = None
 		self.cutAudio = None
+		self.feature = None
+		self.ans = None
 		
 
 	def record(self):
@@ -48,6 +51,7 @@ class Wav:
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
 		self.cut2()
+		self.getFeature()
 		
 	def play(self):
 		print "play %s" % (self.fileName)
@@ -75,7 +79,6 @@ class Wav:
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
-		self.cut2()
 		
 	def loadTxt(self, fileName):
 		fp = open(fileName, 'r')
@@ -136,4 +139,14 @@ class Wav:
 
 		#print ia,ib
 		self.cutAudio = self.audioData[ia:ib]
+	
+	def getFeature(self):
+		cutAudio = self.cutAudio
+		f = extract( np.asarray(cutAudio))
+		f = f.flatten()
+		self.feature = f
+	
+	def match(self, wav):
+		for w in wav:
+			print w
 
