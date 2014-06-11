@@ -50,8 +50,10 @@ class Wav:
 		
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
-		self.audioData = save_data
-		self.cut2()
+		self.audioData = save_data[10000:10000+4608*4]
+		self.stringAudioData = self.audioData.tostring()
+		self.cutAudio = self.audioData
+		# self.cut2()
 		self.getFeature()
 		
 	def play(self):
@@ -59,14 +61,55 @@ class Wav:
 		pa = PyAudio()
 		stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, output=True, frames_per_buffer=BUFFER_SIZE)
 		
-		#stream.write(self.stringAudioData)
-		stream.write(self.cutAudio)
+		stream.write(self.stringAudioData)
+		# stream.write(self.cutAudio)
 		
 		stream.stop_stream()
 		stream.close()
 		pa.terminate()
 	
 	def load(self):
+		print 'load', self.fileName
+		pa = PyAudio()
+		wf = wave.open(self.fileName, 'rb')
+		save_buffer = []
+		string_audio_data = wf.readframes(BUFFER_SIZE)
+		while string_audio_data != '':
+			audio_data = np.fromstring(string_audio_data, dtype=np.short)
+			save_buffer.append( string_audio_data )
+			string_audio_data = wf.readframes(BUFFER_SIZE)
+
+		pa.terminate()
+		self.stringAudioData = "".join(save_buffer)
+		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
+		self.audioData = save_data[10000:10000+4608*4]
+		self.stringAudioData = self.audioData.tostring()
+		self.cutAudio = self.audioData
+			
+		# self.cut2()
+		self.getFeature()
+	
+	# def load(self):
+		# print 'load', self.fileName
+		# pa = PyAudio()
+		# wf = wave.open(self.fileName, 'rb')
+		# save_buffer = []
+		# string_audio_data = wf.readframes(BUFFER_SIZE)
+		# while string_audio_data != '':
+			# audio_data = np.fromstring(string_audio_data, dtype=np.short)
+			# save_buffer.append( string_audio_data )
+			# string_audio_data = wf.readframes(BUFFER_SIZE)
+
+		# pa.terminate()
+		# self.stringAudioData = "".join(save_buffer)
+		# save_data = np.fromstring(self.stringAudioData, dtype=np.short)
+		# self.audioData = save_data
+			
+		# self.cut2()
+		# self.getFeature()
+		
+	def loaddb(self):
+		print 'load', self.fileName
 		pa = PyAudio()
 		wf = wave.open(self.fileName, 'rb')
 		save_buffer = []
@@ -80,17 +123,13 @@ class Wav:
 		self.stringAudioData = "".join(save_buffer)
 		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
 		self.audioData = save_data
-			
-		self.cut2()
-		self.getFeature()
-
 
 		
 	def loadTxt(self, fileName):
 		fp = open(fileName, 'r')
 		self.beat = [int(line) for line in fp]
 		fp.close()
-		self.beatAudio = [(max(0,b-4608),min(b+4608,len(self.audioData)-1)) for b in self.beat]
+		self.beatAudio = [(max(0,b-4608*2),min(b+4608*2,len(self.audioData)-1)) for b in self.beat]
 
 	def plot(self):
 		audio = self.audioData
@@ -113,7 +152,7 @@ class Wav:
 
 
 	def cut2(self):
-		rad = 4608
+		rad = 4608*2
 		self.calVol()
 		maxv = max(self.vol)
 		mid  = np.argmax(self.vol)
@@ -160,8 +199,10 @@ class Wav:
 			
 			d = []
 			for w in wav:
-				d = d + [distance.euclidean(xf, w.feature)]
-			self.ans = self.ans + [d.index(min(d))]
+				d = d + [distance.cosine(xf, w.feature)]
+				# d = d + [calc_pitch_dist(x, w.cutAudio)]
+			# self.ans = self.ans + [d.index(min(d))]
+			self.ans = self.ans + [1]
 				
 		print self.ans
 

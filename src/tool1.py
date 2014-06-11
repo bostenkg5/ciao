@@ -91,37 +91,29 @@ def get_pitch(audio_data):
 	return idx
 
 
-def decide():
-	wav1=Wav('1.wav')
-	wav1.load()
-	
-	wav2=Wav('2.wav')
-	wav2.load()
-	
-	wav3=Wav('3.wav')
-	wav3.load()
-	
-	dist13 = calc_MFCC_dist(wav1.feature, wav3.feature)
-	cos13  = calc_MFCC_cosine_dist(wav1.feature, wav3.feature)
+def decide(wav):
+		
+	dist13 = calc_MFCC_dist(wav[0].feature, wav[2].feature)
+	cos13  = calc_MFCC_cosine_dist(wav[0].feature, wav[2].feature)
 
-	dist23 = calc_MFCC_dist(wav2.feature, wav3.feature)
-	cos23  = calc_MFCC_cosine_dist(wav2.feature, wav3.feature)
+	dist23 = calc_MFCC_dist(wav[1].feature, wav[2].feature)
+	cos23  = calc_MFCC_cosine_dist(wav[1].feature, wav[2].feature)
 	
-	print "dist13",dist13
-	print "dist23",dist23
+	# print "dist13",dist13
+	# print "dist23",dist23
 	
-	print "cos13",cos13
-	print "cos23",cos23
+	# print "cos13",cos13
+	# print "cos23",cos23
 
 	
-	#print "pitch13",calc_pitch_dist(s1, s3)
-	#print "pitch23",calc_pitch_dist(s2, s3)
+	# print "pitch13",calc_pitch_dist(wav[0].feature, wav[2].feature)
+	# print "pitch23",calc_pitch_dist(wav[1].feature, wav[2].feature)
 
 	if dist13 < dist23:
-		print 1
+		print 'result: 1.wav'
 		return 1
 	else:
-		print 2
+		print 'result: 2.wav'
 		return 2
 
 def calc_MFCC_dist(m1,m2):

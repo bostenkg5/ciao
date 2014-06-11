@@ -29,13 +29,18 @@ def init():
 	dbName = [line[:-1] for line in fp]
 	fp.close()
 
-def howGood(audio_data, ans, pos):
+def howGood(audio_data, ans, pos, sampleSum):
 	f1 = extract( np.asarray(audio_data))
 	f1 = f1.flatten()
 	f2 = extract( np.asarray(ans))
 	f2 = f2.flatten()
-	print distance.euclidean(f1, f2)
+	print pos, distance.cosine(f1, f2), sampleSum
 	judgeComment(0,pos)
+	
+# def howGood(audio_data, ans, pos):
+	# d = calc_pitch_dist(audio_data, pos)
+	# print d
+	# judgeComment(0,pos)
 
 def playMusic(n):
 	global db
@@ -45,10 +50,10 @@ def playMusic(n):
 	wf = wave.open(wav.fileName, 'rb')
 	pa = PyAudio()
 	i_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
-	o_stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
-					channels=wf.getnchannels(),
-					rate=wf.getframerate(),
-					output=True)
+	# o_stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
+					# channels=wf.getnchannels(),
+					# rate=wf.getframerate(),
+					# output=True)
 	
 	
 	save_buffer = []
@@ -72,7 +77,7 @@ def playMusic(n):
 
 		string_audio_data = i_stream.read(BUFFER_SIZE)	
 		if len(beatAudio)>0 and sampleSum>=beatAudio[0][1]:
-			print 's'
+			# print 's'
 			wf2 = wave.open('tmp/%d.wav' % (sampleSum), 'wb')
 			wf2.setnchannels(1)
 			wf2.setsampwidth(2)
@@ -81,19 +86,19 @@ def playMusic(n):
 			wf2.close()
 			
 			audio_data = np.fromstring("".join(save_buffer), dtype=np.short)
-			audio_data = audio_data[:9216]
+			audio_data = audio_data[:9216*2]
 
-			td = threading.Thread(target=howGood, args=[audio_data, wav.audioData[beatAudio[0][0]:beatAudio[0][1]], ans2[0]]);
+			td = threading.Thread(target=howGood, args=[audio_data, wav.audioData[beatAudio[0][0]:beatAudio[0][1]], ans2[0], sampleSum]);
 			td.start()
 
 			save_buffer = []
 			beatAudio = beatAudio[1:]
 			ans2 = ans2[1:]
 		elif len(beatAudio)>0 and sampleSum>=beatAudio[0][0]:
-			print 'w'
+			# print 'w'
 			save_buffer.append( string_audio_data )
 		
-		o_stream.write(data)
+		# o_stream.write(data)
 		data = wf.readframes(BUFFER_SIZE)
 		
 		sampleSum = sampleSum + BUFFER_SIZE
@@ -191,15 +196,9 @@ def main():
 	
 	# tmp button
 	tmpButton = Button(tkObj)
-	tmpButton["text"] = 'tmp'
+	tmpButton["text"] = 'recognize'
 	tmpButton.grid(columnspan=10, sticky="nwse")
-	tmpButton["command"] = lambda: decide()
-	
-	# tmp button
-	tmpButton2 = Button(tkObj)
-	tmpButton2["text"] = 'vol'
-	tmpButton2.grid(columnspan=10, sticky="nwse")
-	tmpButton2["command"] = lambda: db[1].match(wav)
+	tmpButton["command"] = lambda: decide(wav)
 	
 	# match button
 	matchButton = Button(tkObj)
