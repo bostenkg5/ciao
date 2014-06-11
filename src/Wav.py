@@ -14,6 +14,7 @@ class Wav:
 		self.stringAudioData = None
 		self.audioData = None
 		self.beat = None
+		self.beatAudio = None
 		self.vol = None
 		self.cutAudio = None
 		
@@ -78,7 +79,7 @@ class Wav:
 		fp = open(fileName, 'r')
 		self.beat = [int(line) for line in fp]
 		fp.close()
-
+		self.beatAudio = [(max(0,b-5000),min(b+5000,len(self.audioData)-1)) for b in self.beat]
 
 	def plot(self):
 		audio = self.audioData
@@ -100,9 +101,10 @@ class Wav:
 			self.vol[i] = np.sum(np.abs(v))
 			
 	def cut(self):
+		self.load()
 		self.calVol()
 		maxv = max(self.vol)
-		thv = 0.1*maxv
+		thv = 0.3*maxv
 		
 		length = self.audioData.shape[0]
 		ia = None
@@ -114,3 +116,5 @@ class Wav:
 				ib = i
 				break
 		self.cutAudio = self.audioData[ia:ib]
+		print ia,ib
+		self.plot2(self.audioData)

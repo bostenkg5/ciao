@@ -46,6 +46,7 @@ def playMusic(n):
 	save_buffer = []
 	sampleSum = 0
 	beat = wav.beat
+	beatAudio = wav.beatAudio
 	data = wf.readframes(BUFFER_SIZE)
 	sampleSum = sampleSum + BUFFER_SIZE
 	while data != '':
@@ -53,17 +54,29 @@ def playMusic(n):
 			createBall(random.randrange(0,4))
 			beat = beat[1:]
 		elif len(beat)>0 and sampleSum>=beat[0] - 4.9*44032:
-			print '%d !!!!' % (sampleSum)
+			# print '%d !!!!' % (sampleSum)
 			createBall(random.randrange(0,4))
 			#judgeComment(random.randrange(0,3),random.randrange(0,4))
 			beat = beat[1:]
-			
-		string_audio_data = i_stream.read(BUFFER_SIZE)
-		audio_data = np.fromstring(string_audio_data, dtype=np.short)
-		save_buffer.append( string_audio_data )
+
+		string_audio_data = i_stream.read(BUFFER_SIZE)	
+		if len(beatAudio)>0 and sampleSum>=beatAudio[0][1]:
+			print sampleSum
+			wf2 = wave.open('tmp/%d.wav' % (sampleSum), 'wb')
+			wf2.setnchannels(1)
+			wf2.setsampwidth(2)
+			wf2.setframerate(SAMPLING_RATE)
+			wf2.writeframes("".join(save_buffer))
+			wf2.close()
+			save_buffer = []
+			beatAudio = beatAudio[1:]
+		elif len(beatAudio)>0 and sampleSum>=beatAudio[0][0]:
+			audio_data = np.fromstring(string_audio_data, dtype=np.short)
+			save_buffer.append( string_audio_data )
 		
 		o_stream.write(data)
 		data = wf.readframes(BUFFER_SIZE)
+		
 		sampleSum = sampleSum + BUFFER_SIZE
 		
 	
@@ -71,13 +84,6 @@ def playMusic(n):
 	o_stream.close()
 	pa.terminate()
 	print 'end database %d' % (n)
-	
-	wf = wave.open('tmp.wav', 'wb')
-	wf.setnchannels(1)
-	wf.setsampwidth(2)
-	wf.setframerate(SAMPLING_RATE)
-	wf.writeframes("".join(save_buffer))
-	wf.close()
 
 	
 def startPlay():
