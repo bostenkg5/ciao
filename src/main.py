@@ -25,7 +25,6 @@ def init():
 	wav.append(w)
 	
 	global dbName
-	print 'database path:', DBpath
 	fp = open(DBpath+'/list.txt', 'r')
 	dbName = [line[:-1] for line in fp]
 	fp.close()
