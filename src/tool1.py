@@ -101,16 +101,16 @@ def decide():
 	wav3=Wav('3.wav')
 	wav3.load()
 	
-	s1 = wav1.audioData/np.max(wav1.audioData)
-	s2 = wav2.audioData/np.max(wav2.audioData)
-	s3 = wav3.audioData/np.max(wav3.audioData)
+	s1 = wav1.cutAudio
+	s2 = wav2.cutAudio
+	s3 = wav3.cutAudio
 	
 	
 	dist13 = calc_MFCC_dist(s1,s3)
-	dist13 +=calc_pitch_dist(s1,s3)
+	#dist13 +=calc_pitch_dist(s1,s3)
 
 	dist23 = calc_MFCC_dist(s2, s3)
-	dist23 +=calc_pitch_dist(s2, s3)
+	#dist23 +=calc_pitch_dist(s2, s3)
 	
 	print "dist13",calc_MFCC_dist(s1,s3)
 	print "pitch13",calc_pitch_dist(s1, s3)
