@@ -201,8 +201,8 @@ class Wav:
 			for w in wav:
 				d = d + [distance.cosine(xf, w.feature)]
 				# d = d + [calc_pitch_dist(x, w.cutAudio)]
-			# self.ans = self.ans + [d.index(min(d))]
-			self.ans = self.ans + [1]
+			self.ans = self.ans + [d.index(min(d))]
+			# self.ans = self.ans + [1]
 				
 		print self.ans
 

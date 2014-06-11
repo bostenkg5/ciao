@@ -15,6 +15,8 @@ wav = []
 db = []
 dbName = []
 
+global score
+
 def init():
 	global wav
 	w = Wav('1.wav')
@@ -34,8 +36,20 @@ def howGood(audio_data, ans, pos, sampleSum):
 	f1 = f1.flatten()
 	f2 = extract( np.asarray(ans))
 	f2 = f2.flatten()
-	print pos, distance.cosine(f1, f2), sampleSum
-	judgeComment(0,pos)
+	d = distance.cosine(f1, f2)
+	print pos, d, sampleSum
+	
+	if d<0.875:
+		a = 2
+	elif d<0.975:
+		a = 1
+	else:
+		a = 0
+	judgeComment(a,pos)
+	
+	global score
+	score = score + a
+	print score
 	
 # def howGood(audio_data, ans, pos):
 	# d = calc_pitch_dist(audio_data, pos)
@@ -50,10 +64,10 @@ def playMusic(n):
 	wf = wave.open(wav.fileName, 'rb')
 	pa = PyAudio()
 	i_stream = pa.open(format=paInt16, channels=1, rate=SAMPLING_RATE, input=True, frames_per_buffer=BUFFER_SIZE)
-	# o_stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
-					# channels=wf.getnchannels(),
-					# rate=wf.getframerate(),
-					# output=True)
+	o_stream = pa.open(format=pa.get_format_from_width(wf.getsampwidth()),
+					channels=wf.getnchannels(),
+					rate=wf.getframerate(),
+					output=True)
 	
 	
 	save_buffer = []
@@ -98,7 +112,7 @@ def playMusic(n):
 			# print 'w'
 			save_buffer.append( string_audio_data )
 		
-		# o_stream.write(data)
+		o_stream.write(data)
 		data = wf.readframes(BUFFER_SIZE)
 		
 		sampleSum = sampleSum + BUFFER_SIZE
@@ -108,9 +122,10 @@ def playMusic(n):
 	o_stream.close()
 	pa.terminate()
 	print 'end database %d' % (n)
-
 	
 def startPlay():
+	global score
+	score = 0
 	global listbox
 	re = listbox.curselection()
 	index = int(re[0])
