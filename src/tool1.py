@@ -102,15 +102,19 @@ def decide():
 	wav3.load()
 	
 	dist13 = calc_MFCC_dist(wav1.feature, wav3.feature)
-	#dist13 +=calc_pitch_dist(s1,s3)
+	cos13  = calc_MFCC_cosine_dist(wav1.feature, wav3.feature)
 
 	dist23 = calc_MFCC_dist(wav2.feature, wav3.feature)
-	#dist23 +=calc_pitch_dist(s2, s3)
+	cos23  = calc_MFCC_cosine_dist(wav2.feature, wav3.feature)
 	
 	print "dist13",dist13
-	#print "pitch13",calc_pitch_dist(s1, s3)
-	
 	print "dist23",dist23
+	
+	print "cos13",cos13
+	print "cos23",cos23
+
+	
+	#print "pitch13",calc_pitch_dist(s1, s3)
 	#print "pitch23",calc_pitch_dist(s2, s3)
 
 	if dist13 < dist23:
@@ -121,9 +125,10 @@ def decide():
 		return 2
 
 def calc_MFCC_dist(m1,m2):
-
 	return distance.euclidean(m1.flatten(), m2.flatten())
-#	return distance.cosine(f1.flatten(), f2.flatten())
+
+def calc_MFCC_cosine_dist(m1,m2):
+	return distance.cosine(m1.flatten(), m2.flatten())
 
 def calc_pitch_dist(m1,m2):
 	p1 = get_pitch(m1)
