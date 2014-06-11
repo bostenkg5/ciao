@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import wave
 from MFCC import extract
+from scipy.spatial import distance
 
 BUFFER_SIZE = 1024
 SAMPLING_RATE = 44032   # about 22050 * 2
@@ -66,6 +67,25 @@ class Wav:
 		pa.terminate()
 	
 	def load(self):
+		print 'load', self.fileName
+		pa = PyAudio()
+		wf = wave.open(self.fileName, 'rb')
+		save_buffer = []
+		string_audio_data = wf.readframes(BUFFER_SIZE)
+		while string_audio_data != '':
+			audio_data = np.fromstring(string_audio_data, dtype=np.short)
+			save_buffer.append( string_audio_data )
+			string_audio_data = wf.readframes(BUFFER_SIZE)
+
+		pa.terminate()
+		self.stringAudioData = "".join(save_buffer)
+		save_data = np.fromstring(self.stringAudioData, dtype=np.short)
+		self.audioData = save_data
+		
+		self.cut2()
+		self.getFeature()
+	
+	def loaddb(self):
 		pa = PyAudio()
 		wf = wave.open(self.fileName, 'rb')
 		save_buffer = []
@@ -89,7 +109,7 @@ class Wav:
 		fp = open(fileName, 'r')
 		self.beat = [int(line) for line in fp]
 		fp.close()
-		self.beatAudio = [(max(0,b-5000),min(b+5000,len(self.audioData)-1)) for b in self.beat]
+		self.beatAudio = [(max(0,b-4608),min(b+4608,len(self.audioData)-1)) for b in self.beat]
 
 	def plot(self):
 		audio = self.audioData
@@ -112,7 +132,7 @@ class Wav:
 
 
 	def cut2(self):
-		rad = 5000
+		rad = 4608
 		self.calVol()
 		maxv = max(self.vol)
 		mid  = np.argmax(self.vol)
@@ -152,6 +172,15 @@ class Wav:
 		self.feature = f
 	
 	def match(self, wav):
-		for w in wav:
-			print w
+		self.ans = []
+		for b in self.beatAudio:
+			x = self.audioData[b[0]:b[1]]
+			xf = extract( np.asarray(x)).flatten()
+			
+			d = []
+			for w in wav:
+				d = d + [distance.euclidean(xf, w.feature)]
+			self.ans = self.ans + [d.index(min(d))]
+				
+		print self.ans
 
