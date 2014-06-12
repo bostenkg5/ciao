@@ -39,9 +39,9 @@ def howGood(audio_data, ans, pos, sampleSum):
 	d = distance.cosine(f1, f2)
 	print pos, d, sampleSum
 	
-	if d<0.875:
+	if d<0.925:
 		a = 2
-	elif d<0.975:
+	elif d<1:
 		a = 1
 	else:
 		a = 0
